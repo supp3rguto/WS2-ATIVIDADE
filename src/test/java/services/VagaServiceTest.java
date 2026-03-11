@@ -25,6 +25,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -99,19 +101,22 @@ class VagaServiceTest {
         @Test
         @DisplayName("Deve retornar vaga existente sem salvar novamente quando já existir")
         void deveRetornarExistente() {
+            // Given
             VagaRequestDTO dto = criarVagaRequestDTO();
             Vaga vagaExistente = criarVagaEntidade();
 
             when(repository.findByFonteAndCodigoVaga(dto.fonte(), dto.codigoVaga()))
                     .thenReturn(Optional.of(vagaExistente));
 
+            // When
             VagaResponseDTO result = service.salvar(dto);
 
-            // CORREÇÃO: O service real não retorna null, retorna a vaga encontrada
-            assertThat(result).isNotNull();
+            // Then
+            // CORREÇÃO: O service retorna a vaga, então NÃO pode ser isNull()
+            assertThat(result).isNotNull(); 
             assertThat(result.id()).isEqualTo(vagaExistente.getId());
 
-            // Garante que o repository.save NUNCA foi chamado
+            // CORREÇÃO: Se a vaga já existe, o save NUNCA deve ser chamado (never)
             verify(repository, never()).save(any(Vaga.class));
         }
     }
