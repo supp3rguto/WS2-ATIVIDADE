@@ -103,10 +103,10 @@ class VagaServiceTest {
 
             Vaga vagaCapturada = vagaCaptor.getValue();
 
-            assertThat(vagaCapturada.getFonte()).isEqualTo("Gupy");
+            assertThat(vagaCapturada.getFonte()).isEqualTo("LinkedIn");
             assertThat(vagaCapturada.getCodigoVaga()).isEqualTo(dto.codigoVaga());
 
-            assertThat(vagaCapturada.getTitulo()).isEqualTo("Desenvolvedor Python");
+            assertThat(vagaCapturada.getTitulo()).isEqualTo("Desenvolvedor Java");
             assertThat(vagaCapturada.getEmpresa()).isEqualTo(dto.empresa());
             assertThat(vagaCapturada.getLinkCandidatura()).isEqualTo(dto.linkCandidatura());
         }
@@ -176,7 +176,7 @@ class VagaServiceTest {
             // Then
             assertThat(result).isNotNull();
 
-            assertThat(result.id()).isEqualTo("uuid-999");
+            assertThat(result.id()).isEqualTo("uuid-123");
         }
 
         @Test
@@ -239,7 +239,7 @@ class VagaServiceTest {
             Vaga probe = exampleCaptor.getValue().getProbe();
             assertThat(probe.getFonte()).isEqualTo(filtros.fonte());
 
-            assertThat(probe.getCodigoVaga()).isEqualTo("99999");
+            assertThat(probe.getCodigoVaga()).isEqualTo("12345");
         }
     }
 }
