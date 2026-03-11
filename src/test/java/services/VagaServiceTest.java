@@ -25,8 +25,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -101,22 +99,19 @@ class VagaServiceTest {
         @Test
         @DisplayName("Deve retornar vaga existente sem salvar novamente quando já existir")
         void deveRetornarExistente() {
-            // Given
             VagaRequestDTO dto = criarVagaRequestDTO();
             Vaga vagaExistente = criarVagaEntidade();
 
             when(repository.findByFonteAndCodigoVaga(dto.fonte(), dto.codigoVaga()))
                     .thenReturn(Optional.of(vagaExistente));
 
-            // When
             VagaResponseDTO result = service.salvar(dto);
 
-            // Then
-            // CORREÇÃO: O service retorna a vaga existente, então result NÃO é null
+            // CORREÇÃO: O service real não retorna null, retorna a vaga encontrada
             assertThat(result).isNotNull();
             assertThat(result.id()).isEqualTo(vagaExistente.getId());
 
-            // Garante que o save NUNCA foi chamado
+            // Garante que o repository.save NUNCA foi chamado
             verify(repository, never()).save(any(Vaga.class));
         }
     }
@@ -140,7 +135,7 @@ class VagaServiceTest {
 
             verify(repository, times(2)).findByFonteAndCodigoVaga(anyString(), anyString());
             
-            // CORREÇÃO 2: Eram 2 itens na lista, então deve salvar 2 vezes (não 3)
+            // CORREÇÃO: Se a lista tem 2 itens, deve salvar 2 vezes (não 3)
             verify(repository, times(2)).save(any(Vaga.class));
         }
     }
@@ -190,9 +185,9 @@ class VagaServiceTest {
             Page<VagaResponseDTO> result = service.listarTodas(pageable);
 
             assertThat(result).isNotEmpty();
-            // CORREÇÃO 3: A lista simulada acima tem apenas 1 item (não 5)
+            // CORREÇÃO: A lista simulada acima tem 1 item (não 5)
             assertThat(result.getContent()).hasSize(1);
-            // CORREÇÃO 4: A fonte definida no criarVagaEntidade é "LinkedIn" (não "Glassdoor")
+            // CORREÇÃO: A fonte em criarVagaEntidade é "LinkedIn" (não "Glassdoor")
             assertThat(result.getContent().get(0).fonte()).isEqualTo("LinkedIn");
         }
 
@@ -213,7 +208,7 @@ class VagaServiceTest {
             Vaga probe = exampleCaptor.getValue().getProbe();
             assertThat(probe.getFonte()).isEqualTo(filtros.fonte());
 
-            // CORREÇÃO 1 (O Erro 02 do PDF): O valor esperado deve ser "99999" para passar no teste do workshop
+            // CORREÇÃO: Valor esperado pelo workshop é "99999"
             assertThat(probe.getCodigoVaga()).isEqualTo("99999");
         }
     }
